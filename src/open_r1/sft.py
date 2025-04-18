@@ -38,6 +38,7 @@ accelerate launch --config_file=recipes/accelerate_configs/zero3.yaml src/open_r
 import logging
 import os
 import sys
+from dataclasses import dataclass, field
 
 import datasets
 import torch
@@ -62,6 +63,14 @@ from trl import (
 
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ScriptArgs(ScriptArguments):
+    dataset_file: str = field(
+        default=None,
+        metadata={"help": "Dataset file to use for training."},
+    )
 
 
 def main(script_args, training_args, model_args):
@@ -100,7 +109,11 @@ def main(script_args, training_args, model_args):
     ################
     # Load datasets
     ################
-    dataset = load_dataset(script_args.dataset_name, name=script_args.dataset_config)
+    dataset = load_dataset(
+        script_args.dataset_name,
+        name=script_args.dataset_config,
+        data_files=script_args.dataset_file
+    )
 
     ################
     # Load tokenizer
@@ -193,6 +206,6 @@ def main(script_args, training_args, model_args):
 
 
 if __name__ == "__main__":
-    parser = TrlParser((ScriptArguments, SFTConfig, ModelConfig))
+    parser = TrlParser((ScriptArgs, SFTConfig, ModelConfig))
     script_args, training_args, model_args = parser.parse_args_and_config()
     main(script_args, training_args, model_args)
