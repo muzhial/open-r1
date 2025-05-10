@@ -130,7 +130,7 @@ setup(
     zip_safe=False,
     # extras_require=extras,
     python_requires=">=3.10.9",
-    # install_requires=install_requires,
+    install_requires=install_requires,
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
